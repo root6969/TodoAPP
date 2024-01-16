@@ -5,12 +5,14 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,9 +63,7 @@ public class MainActivity extends AppCompatActivity {
                     if (child != null) {
                         int position = recyclerView.getChildAdapterPosition(child);
                         if (position != RecyclerView.NO_POSITION) {
-                            // Handle long-press here
-                            tasksArrayList.remove(position);
-                            taskAdapter.notifyItemRemoved(position);
+                            showDeleteConfirmationDialog(recyclerView, position); // Show the confirmation dialog
                         }
                     }
                 }
@@ -86,6 +86,20 @@ public class MainActivity extends AppCompatActivity {
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
             }
         });
+    }
+
+    // Method to show the confirmation dialog
+    private void showDeleteConfirmationDialog(final RecyclerView rv, final int position) {
+        DeleteConfirmationDialogFragment dialogFragment = new DeleteConfirmationDialogFragment();
+        dialogFragment.setOnDeleteConfirmedListener(new DeleteConfirmationDialogFragment.OnDeleteConfirmedListener() {
+            @Override
+            public void onDeleteConfirmed() {
+                // Handle deletion here
+                tasksArrayList.remove(position);
+                taskAdapter.notifyItemRemoved(position);
+            }
+        });
+        dialogFragment.show(getSupportFragmentManager(), "DeleteConfirmationDialog");
     }
 
     public void onClickAdd(View v) {
